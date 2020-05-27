@@ -171,6 +171,14 @@ func IsOfflineMachine(ns, hostname string) bool {
 		return false
 	}
 	if _, ok := offlineMachines[ns][hostname]; !ok {
+		nsMachine, ok := Machines[ns]
+		if !ok || len(nsMachine) == 0 {
+			return true
+		}
+		_, ok = nsMachine[hostname]
+		if !ok {
+			return true
+		}
 		return false
 	}
 	return true
