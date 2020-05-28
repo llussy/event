@@ -165,6 +165,7 @@ func getOfflineMachines() (map[string]map[string]bool, error) {
 // IsOfflineMachine return a machine is offline status or not.
 // Return false if the hostname is not found.
 func IsOfflineMachine(ns, hostname string) bool {
+	log.Warningf("start ns  %s hostname %s", ns, hostname)
 	machineMu.RLock()
 	defer machineMu.RUnlock()
 	if _, ok := offlineMachines[ns]; !ok {
