@@ -176,12 +176,15 @@ func IsOfflineMachine(ns, hostname string) bool {
 		if !ok || len(nsMachine) == 0 {
 			return true
 		}
+		log.Warning("111111111111111",nsMachine[hostname])
 		if _, ok = nsMachine[hostname]; !ok {
 			log.Warningf("xxxxxxns %s hostname %s delete,testtesttest", ns, hostname)
 			return true
 		}
+		log.Warningf("%s hostname exist",hostname)
 		return false
 	}
+	log.Warningf(" %s in offline exist",hostname)
 	return true
 }
 
