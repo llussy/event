@@ -169,28 +169,35 @@ func IsOfflineMachine(ns, hostname string) bool {
 	machineMu.RLock()
 	defer machineMu.RUnlock()
 	if _, ok := offlineMachines[ns]; !ok {
-		return false
-	}
-	if _, ok := offlineMachines[ns][hostname]; !ok {
-		log.Warningf("offline not exist ns  %s hostname %s", ns, hostname)
-		log.Warning("111111111",Machines[ns])
-
+		log.Warning("可能offline ns中仅有的一台机器被删除了",ns)
 		nsMachine, ok := Machines[ns]
-		log.Warning("222222222",nsMachine)
 		if !ok || len(nsMachine) == 0 {
+			log.Warning("ns被删除了",ns)
 			return true
 		}
-		log.Warning("length",len(Machines[ns]))
-		log.Warning("length22",len(nsMachine[hostname]))
-		log.Warning("3333333",nsMachine[hostname])
 		if _, ok = nsMachine[hostname]; !ok {
-			log.Warningf("xxxxxxns %s hostname %s delete,testtesttest", ns, hostname)
+			log.Warning("hostname被删除了",hostname)
 			return true
 		}
-		log.Warningf("%s hostname exist",hostname)
+		log.Warning("machine中ns存在,hostnam存在，确实不是offline",hostname)
 		return false
 	}
-	log.Warningf(" %s in offline exist",hostname)
+	log.Warning("offline中存在ns,继续判断hostname",ns)
+	if _, ok := offlineMachines[ns][hostname]; !ok {
+		log.Warning("offline没有，可能被删除了", hostname)
+		nsMachine, ok := Machines[ns]
+		if !ok || len(nsMachine) == 0 {
+			log.Warning("22ns被删除了",ns)
+			return true
+		}
+		if _, ok = nsMachine[hostname]; !ok {
+			log.Warningf("22hostname被删除了", hostname)
+			return true
+		}
+		log.Warning("22确实不是offline",hostname)
+		return false
+	}
+	log.Warning("你真的是offlone",hostname)
 	return true
 }
 
