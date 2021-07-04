@@ -165,22 +165,50 @@ func getOfflineMachines() (map[string]map[string]bool, error) {
 // IsOfflineMachine return a machine is offline status or not.
 // Return false if the hostname is not found.
 func IsOfflineMachine(ns, hostname string) bool {
+	log.Warningf("start ns  %s hostname %s", ns, hostname)
 	machineMu.RLock()
 	defer machineMu.RUnlock()
 	if _, ok := offlineMachines[ns]; !ok {
-		return false
-	}
-	if _, ok := offlineMachines[ns][hostname]; !ok {
+		log.Warning("可能offline ns中仅有的一台机器被删除了 ", ns)
 		nsMachine, ok := Machines[ns]
 		if !ok || len(nsMachine) == 0 {
+			log.Warning("ns被删除了 ", ns)
+			log.Warning("true")
 			return true
+		}
+		fmt.Println("nsMachine",nsMachine)
+		if _, ok = nsMachine[hostname]; !ok {
+			log.Warning("hostname被删除了 ", hostname)
+			log.Warning("true")
+			return true
+		}else {
+			log.Warning("machine hostname 存在 ",hostname)
+			log.Warning("false")
+			return false
+		}
+	}
+	log.Warning("offline ns存在 ", ns)
+	if _, ok := offlineMachines[ns][hostname]; !ok {
+		log.Warning("offline hostname 不存在，可能被删除了,判断machine ", hostname)
+		nsMachine, ok := Machines[ns]
+		if !ok || len(nsMachine) == 0 {
+			log.Warning("Machine ns被删除了 ",ns)
+		}else {
+			log.Warning("machine ns存在 ",ns)
 		}
 		if _, ok = nsMachine[hostname]; !ok {
+			log.Warningf("hostname被删除了", hostname)
+			log.Warning("true")
 			return true
 		}
+		log.Warning("machine hostname存在,没有被删除,not offline ",hostname)
+		log.Warning("false")
 		return false
 	}
+	log.Warning("你真的是offline ",hostname)
+	log.Warning("true")
 	return true
+
 }
 
 // MachineIP return ip by hostname.
